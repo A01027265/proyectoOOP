@@ -1,4 +1,2 @@
-public enum User{
-
-    
+public class User {
 }
