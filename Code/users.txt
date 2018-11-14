@@ -1,0 +1,3 @@
+Username    Password        UserType    FirstName   LastName
+empobla     helloThere      1           Emilio      Popovits
+saherfan    helloThere1     2           Santiago    Hernandez
