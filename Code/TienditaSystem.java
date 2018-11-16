@@ -168,8 +168,10 @@ public class TienditaSystem{
         FileWriter writer = new FileWriter(catalogFileName, true);
         PrintWriter pw = new PrintWriter(writer);
         // Recorremos el array de llaves para sacar la información de cada empleado y la escribimos como una nueva entrada en el csv
-        for (int i = 0; i < catalog.size(); i++) {
-            Product product = catalog.getCatalog();
+        // Recorremos el array de llaves para sacar la información de cada usuario y la escribimos como una nueva entrada en el csv
+        ArrayList<Product> catalogArray = catalog.getUserList();
+        for (int i = 0; i < catalogArray.size(); i++) {
+            Product product = catalogArray.get(i);
             // Without type and quantity
             pw.printf("%s,%s,%s,%f,%d", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
             // With type and quantity
