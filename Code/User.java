@@ -1,3 +1,5 @@
+package finalProject;
+
 import java.io.BufferedReader;
 
 import java.io.*;
@@ -22,13 +24,13 @@ public class User {
     public void decideUserType(int userType){
         switch (userType){
             case 1:
-                userType = User.ADMINISTRATOR;
+                this.userType = UserType.ADMINISTRATOR;
                 break;
             case 2:
-                userType = User.MANAGER;
+                this.userType = UserType.MANAGER;
                 break;
             case 3:
-                userType = User.VENDOR;
+                this.userType = UserType.VENDOR;
                 break;
         }
     }
