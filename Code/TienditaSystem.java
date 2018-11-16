@@ -1,21 +1,26 @@
+import java.io.*;
 import java.util.*;
 
 public class TienditaSystem{
     private static Scanner sc = new Scanner(System.in);
     private static UserList userList;
-    private static User currentUser;
-    private static int usetType;
     private static ProductCatalog catalog;
 
-    private static String fileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/catalog.csv";
+    private static String catalogFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/catalog.csv";
+    private static String usersFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/users.csv";
 
     public static void main(String[] args) {
         String username;
         String password;
         int selectedOption;
 
-        //TODO: Load Data
-        //TODO: Save Data
+        try {
+            loadCatalog();
+            loadUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.out.println("*********************************************");
         System.out.println("************ Quiubo, estás en la ************");
         System.out.println("************ mejor tiendita ever ************");
@@ -27,18 +32,18 @@ public class TienditaSystem{
         System.out.printf("Contraseña: ");
         password = sc.nextLine();
         while(!(userList.login(username, password))){
-            System.out.println("Sorry, no conozco ese usuario/contraseña. Intenta otra vez, o bien, llégale.");
+            System.out.println("Sorry, no conozco ese usuario/contraseña. Intenta otra vez");
             System.out.printf("Usuario: ");
             username = sc.nextLine();
             System.out.printf("Contraseña: ");
             password = sc.nextLine();
         }
 
-        currentUser = userList.getUserByUsername(username);
+        User currentUser = userList.getUserByUsername(username);
 
         System.out.printf("¡Hola hola! %s\n", currentUser.getName());
 
-        userType = currentUser.getType();
+        int userType = currentUser.getType();
 
         while(true){
             System.out.printf("Usuario: %s\n", currentUser.getUsername());
@@ -121,47 +126,78 @@ public class TienditaSystem{
         }
     }
 
-    private static void saveCSV() throws IOException {
-        File archivo = new File(fileName);
-        //destino donde se creará el archivo
-        archivo.delete();
-        archivo.createNewFile();
-        //Crea un nuevo archivo en este caso de llama test.csv
-        FileWriter escritor = new FileWriter(archivo, true);
-        /* no usar asi
-        +  escritor.write("Soy chido.\nSalto de línea");
-        */
-        PrintWriter pw = new PrintWriter(escritor);
-        // Creamos una lista para albergar las llaves del map
-        List<Integer> list = new ArrayList<Integer>();
-        list.addAll(nombresEmpleados.keySet());
+    private static void loadCatalog() throws IOException {
+        //TODO: WHAT DO WE DO WITH TYPE AND QUANTITY OF PRODUCT?
+        // Cargamos el csv para construir nuestros maps
+        String line;
+        File file = new File(catalogFileName);
+        FileReader reader = new FileReader(file);
+        catalog = new ProductCatalog();
+        // Recorremos cada línea para obtener la info del producto
+        while ((line = br.readLine()) != null) {
+            String[] elements;
+            elements = line.split(",");
+            // Without type and quantity
+            catalog.addProductToCatalog(elements[0],elements[1],elements[2],Double.valueOf(elements[3]),Integer.valueOf(elements[4]),1,1,1);
+            // With type and quantity
+            //catalog.addProductToCatalog(elements[0],elements[1],elements[2],Double.valueOf(elements[3]),Integer.valueOf(elements[4]),Integer.valueOf(elements[5]),Integer.valueOf(elements[6]),Double.valueOf(elements[7]));
+        }
+        reader.close();
+    }
+
+    private static void loadUsers() throws IOException {
+        // Cargamos el csv para construir nuestros maps
+        String line;
+        File file = new File(usersFileName);
+        FileReader reader = new FileReader(file);
+        BufferedReader br = new BufferedReader(reader);
+        userList = new UserList();
+        // Recorremos cada línea para obtener la info del empleado
+        while ((line = br.readLine()) != null) {
+            String[] elements = line.split(",");
+            userList.createUser(elements[0], elements[1], elements[2], elements[3], Integer.valueOf(elements[4]));
+        }
+        reader.close();
+    }
+
+    private static void saveCatalog() throws IOException {
+        //TODO: WHAT DO WE DO WITH TYPE AND QUANTITY OF PRODUCT?
+        File file = new File(catalogFileName);
+        file.delete();
+        file.createNewFile();
+        FileWriter writer = new FileWriter(catalogFileName, true);
+        PrintWriter pw = new PrintWriter(writer);
         // Recorremos el array de llaves para sacar la información de cada empleado y la escribimos como una nueva entrada en el csv
-        for (int i = 0; i<list.size(); i++) {
-            int num = list.get(i);
-            pw.printf("%d,%s,%s,%s,%d,%s", num, nombresEmpleados.get(num),apellidosEmpleados.get(num),cargosEmpleados.get(num),sueldosEmpleados.get(num),fechasIngresoEmpleados.get(num));
+        for (int i = 0; i < catalog.size(); i++) {
+            Product product = catalog.getCatalog();
+            // Without type and quantity
+            pw.printf("%s,%s,%s,%f,%d", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
+            // With type and quantity
+            //pw.printf("%s,%s,%s,%f,%d,%d,%d,%f", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
             if (i != list.size()){
                 pw.printf("\n");
             }
         }
-        escritor.close();
+        writer.close();
     }
 
-    private static void loadCSV() throws IOException {
-        // Cargamos el csv para construir nuestros maps
-        String line;
-        FileReader reader = new FileReader(fileName);
-        BufferedReader br = new BufferedReader(reader);
-        // Recorremos cada línea para obtener la info del empleado
-        while ((line = br.readLine()) != null) {
-            String[] elements;
-            elements = line.split(",");
-            nombresEmpleados.put(Integer.valueOf(elements[0]), elements[1]);
-            apellidosEmpleados.put(Integer.valueOf(elements[0]), elements[2]);
-            cargosEmpleados.put(Integer.valueOf(elements[0]), elements[3]);
-            sueldosEmpleados.put(Integer.valueOf(elements[0]), Integer.valueOf(elements[4]));
-            fechasIngresoEmpleados.put(Integer.valueOf(elements[0]), elements[5]);
+    private static void saveUsers() throws IOException {
+        //destino donde se creará el archivo
+        File file = new File(usersFileName);
+        file.delete();
+        file.createNewFile();
+        FileWriter writer = new FileWriter(usersFileName, true);
+        PrintWriter pw = new PrintWriter(writer);
+        // Recorremos el array de llaves para sacar la información de cada usuario y la escribimos como una nueva entrada en el csv
+        ArrayList<User> userListArray = userList.getUserList();
+        for (int i = 0; i < userListArray.size(); i++) {
+            User user = userListArray.get(i);
+            pw.printf("%s,%s,%s,%s,%d", user.getUsername(), user.getPassword(), user.getName(), user.getLastname(), user.getUserType());
+            if (i != list.size()){
+                pw.printf("\n");
+            }
         }
-        reader.close();
+        writer.close();
     }
 
     private static void adminPrompt(){
@@ -199,14 +235,16 @@ public class TienditaSystem{
     }
 
     private static void sellProduct(){
-        int upn;
+        String upn;
         int quantity;
+        Product product;
+        Product soldProduct;
         Sale currentSale =  new Sale();
         System.out.println("*****************************");
         System.out.println("         Nueva venta         ");
         System.out.println("*****************************");
         int selectedOption = 0;
-        while (selectedOption != 2) {
+        while (selectedOption != 3) {
             System.out.println("(1) Añadir producto a carrito de compra");
             System.out.println("(2) Ver carrito de compra");
             System.out.println("(3) Checkout");
@@ -244,14 +282,16 @@ public class TienditaSystem{
                         }
                         System.out.printf("Unidades disponibles de ese producto: %d): ", product.getQuantity());
                         System.out.printf("Cantidad: ");
-                        quantity = sc.nextLine();
+                        quantity = sc.nextInt();
+                        sc.nextLine();
                         while (quantity > product.getQuantity()) {
                             System.out.println("No hay suficientes unidades. Escoge un número menor.");
                             System.out.printf("Cantidad: ");
-                            quantity = sc.nextLine();
+                            quantity = sc.nextInt();
+                            sc.nextLine();
                         }
                         try{
-                            Product soldProduct = (Product)product.clone();
+                            soldProduct = (Product)product.clone();
                         } catch(Exception e){
                             System.out.println(e);            // Always must return something
                             System.out.println("Exception");
@@ -266,6 +306,7 @@ public class TienditaSystem{
                         System.out.println("      Carrito de compra      ");
                         System.out.println("*****************************");
                         currentSale.printItems();
+                        System.out.printf("Productos totales: %d\n", currentSale.getTotalItems());
                         break;
                     case 3:
                         System.out.println("****************************");
@@ -288,79 +329,92 @@ public class TienditaSystem{
 
     private static void manageInventory(){
         boolean wrongProduct;
-        System.out.println("******************************");
-        System.out.println("    Administrar inventario    ");
-        System.out.println("******************************");
-        System.out.println("(1) Añadir unidades");
-        System.out.println("(2) Retirar unidades");
-        System.out.println("******************************");
-        System.out.print("Selecciona una opción: ");
-        selectedOption = sc.nextInt();
-        sc.nextLine();
-        boolean wrongOption = true;
-        while(wrongOption){
-            wrongOption = false;
-            switch (selectedOption) {
-                case 1:
-                    System.out.println("*****************************");
-                    System.out.println("       Añadir unidades       ");
-                    System.out.println("*****************************");
-                    System.out.printf("UPN: ");
-                    upn = sc.nextLine();
-                    while (!(catalog.exists(upn))) {
-                        System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
+        Product product;
+        int selectedOption = 0;
+        String upn;
+        int quantity;
+
+        while(selectedOption != 3) {
+            System.out.println("******************************");
+            System.out.println("    Administrar inventario    ");
+            System.out.println("******************************");
+            System.out.println("(1) Añadir unidades");
+            System.out.println("(2) Retirar unidades");
+            System.out.println("(3) Regresar a menú principal");
+            System.out.println("******************************");
+            System.out.print("Selecciona una opción: ");
+            selectedOption = sc.nextInt();
+            sc.nextLine();
+            boolean wrongOption = true;
+            while (wrongOption) {
+                wrongOption = false;
+                switch (selectedOption) {
+                    case 1:
+                        System.out.println("*****************************");
+                        System.out.println("       Añadir unidades       ");
+                        System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
-                    }
-                    product = catalog.getProductByUPN(upn);
-                    System.out.printf("Unidades actuales de ese producto: %d): ", product.getQuantity());
-                    System.out.printf("Cantidad de unidades para agregar: ");
-                    quantity = sc.nextLine();
-                    product.setQuantity(quantity);
-                    System.out.println("Inventario actualizado");
-                    break;
-                case 2:
-                    System.out.println("*****************************");
-                    System.out.println("       Retirar unidades      ");
-                    System.out.println("*****************************");
-                    System.out.printf("UPN: ");
-                    upn = sc.nextLine();
-                    wrongProduct = true;
-                    while (wrongProduct) {
-                        if (!(catalog.exists(upn))) {
+                        while (!(catalog.exists(upn))) {
                             System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
                             System.out.printf("UPN: ");
                             upn = sc.nextLine();
-                        } else {
-                            product = catalog.getProductByUPN(upn);
-                            if (product.getQuantity() == 0) {
-                                System.out.println("No hay disponibilidad de ese producto.");
-                                System.out.println("Intente con otro producto.");
+                        }
+                        product = catalog.getProductByUPN(upn);
+                        System.out.printf("Unidades actuales de ese producto: %d): ", product.getQuantity());
+                        System.out.printf("Cantidad de unidades para agregar: ");
+                        quantity = sc.nextInt();
+                        sc.nextLine();
+                        product.setQuantity(quantity);
+                        System.out.println("Inventario actualizado");
+                        break;
+                    case 2:
+                        System.out.println("*****************************");
+                        System.out.println("       Retirar unidades      ");
+                        System.out.println("*****************************");
+                        System.out.printf("UPN: ");
+                        upn = sc.nextLine();
+                        wrongProduct = true;
+                        while (wrongProduct) {
+                            if (!(catalog.exists(upn))) {
+                                System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
                                 System.out.printf("UPN: ");
                                 upn = sc.nextLine();
-                            } else{
-                                wrongProduct = false;
+                            } else {
+                                product = catalog.getProductByUPN(upn);
+                                if (product.getQuantity() == 0) {
+                                    System.out.println("No hay disponibilidad de ese producto.");
+                                    System.out.println("Intente con otro producto.");
+                                    System.out.printf("UPN: ");
+                                    upn = sc.nextLine();
+                                } else {
+                                    wrongProduct = false;
+                                }
                             }
                         }
-                    }
-                    System.out.printf("Unidades disponibles de ese producto: %d): ", product.getQuantity());
-                    System.out.printf("Cantidad: ");
-                    quantity = sc.nextLine();
-                    while (quantity > product.getQuantity()) {
-                        System.out.println("No hay suficientes unidades. Escoge un número menor.");
+                        System.out.printf("Unidades disponibles de ese producto: %d): ", product.getQuantity());
                         System.out.printf("Cantidad: ");
-                        quantity = sc.nextLine();
-                    }
-                    product.setQuantity(quantity);
-                    System.out.println("Inventario actualizado");
-                    break;
-                default:
-                    wrongOption = true;
-                    System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                    System.out.println("Selecciona una opción: ");
-                    selectedOption = sc.nextInt();
-                    sc.nextLine();
-                    break;
+                        quantity = sc.nextInt();
+                        sc.nextLine();
+                        while (quantity > product.getQuantity()) {
+                            System.out.println("No hay suficientes unidades. Escoge un número menor.");
+                            System.out.printf("Cantidad: ");
+                            quantity = sc.nextInt();
+                            sc.nextLine();
+                        }
+                        product.setQuantity(quantity);
+                        System.out.println("Inventario actualizado");
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        wrongOption = true;
+                        System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                        System.out.println("Selecciona una opción: ");
+                        selectedOption = sc.nextInt();
+                        sc.nextLine();
+                        break;
+                }
             }
         }
     }
@@ -374,192 +428,200 @@ public class TienditaSystem{
         int productType;
         int type;
         double quantityOfContent;
+        int selectedOption = 0;
+        Product product;
 
-        System.out.println("******************************");
-        System.out.println("(1) Añadir producto");
-        System.out.println("(2) Eliminar producto");
-        System.out.println("(3) Editar producto");
-        System.out.println("(4) Imprimir catálogo");
-        System.out.println("******************************");
-        System.out.print("Selecciona una opción: ");
-        selectedOption = sc.nextInt();
-        sc.nextLine();
-        boolean wrongOption = true;
-        while(wrongOption){
-            wrongOption = false;
-            switch (selectedOption) {
-                case 1:
-                    System.out.println("*****************************");
-                    System.out.println("       Añadir producto       ");
-                    System.out.println("*****************************");
-                    System.out.printf("UPN: ");
-                    upn = sc.nextLine();
-                    while (catalog.exists(upn)) {
-                        System.out.println("Ese UPN ya existe. Intenta de nuevo.");
+        while(selectedOption != 5) {
+            System.out.println("******************************");
+            System.out.println("(1) Añadir producto");
+            System.out.println("(2) Eliminar producto");
+            System.out.println("(3) Editar producto");
+            System.out.println("(4) Imprimir catálogo");
+            System.out.println("(5) Regresar a menú principal");
+            System.out.println("******************************");
+            System.out.print("Selecciona una opción: ");
+            selectedOption = sc.nextInt();
+            sc.nextLine();
+            boolean wrongOption = true;
+            while (wrongOption) {
+                wrongOption = false;
+                switch (selectedOption) {
+                    case 1:
+                        System.out.println("*****************************");
+                        System.out.println("       Añadir producto       ");
+                        System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
-                    }
-                    System.out.printf("Nombre: ");
-                    name = sc.nextLine();
-                    System.out.printf("Descripción: ");
-                    description = sc.nextLine();
-                    System.out.printf("Precio (en pesos): ");
-                    price = sc.nextDouble();
-                    sc.nextLine();
-                    System.out.printf("Cantidad inicial: ");
-                    quantity = sc.nextInt();
-                    sc.nextLine();
-                    System.out.printf("Tipo de producto: ");
-                    System.out.println("(1) Alimento");
-                    System.out.println("(2) Bebida");
-                    System.out.println("******************************");
-                    System.out.print("Selecciona una opción: ");
-                    productType = sc.nextInt();
-                    sc.nextLine();
-                    while (productType > 2 && productType < 1) {
-                        System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                        System.out.println("Selecciona una opción: ");
+                        while (catalog.exists(upn)) {
+                            System.out.println("Ese UPN ya existe. Intenta de nuevo.");
+                            System.out.printf("UPN: ");
+                            upn = sc.nextLine();
+                        }
+                        System.out.printf("Nombre: ");
+                        name = sc.nextLine();
+                        System.out.printf("Descripción: ");
+                        description = sc.nextLine();
+                        System.out.printf("Precio (en pesos): ");
+                        price = sc.nextDouble();
+                        sc.nextLine();
+                        System.out.printf("Cantidad inicial: ");
+                        quantity = sc.nextInt();
+                        sc.nextLine();
+                        System.out.printf("Tipo de producto: ");
+                        System.out.println("(1) Alimento");
+                        System.out.println("(2) Bebida");
+                        System.out.println("******************************");
+                        System.out.print("Selecciona una opción: ");
                         productType = sc.nextInt();
                         sc.nextLine();
-                    }
-                    switch (productType) {
-                        case 1:
-                            System.out.printf("Tipo de alimento:");
-                            System.out.println("(1) Caramelo o dulce");
-                            System.out.println("(2) Pan");
-                            System.out.println("(3) Papas fritas");
-                            System.out.println("(4) Sandwich");
-                            System.out.println("(5) Otro");
-                            System.out.println("******************************");
-                            System.out.print("Selecciona una opción: ");
-                            type = sc.nextInt();
+                        while (productType > 2 && productType < 1) {
+                            System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                            System.out.println("Selecciona una opción: ");
+                            productType = sc.nextInt();
                             sc.nextLine();
-                            while (type > 2 && type < 1) {
-                                System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                                System.out.println("Selecciona una opción: ");
-                                type = sc.nextInt();
-                                sc.nextLine();
-                            }
-                            break;
-                        case 2:
-                            System.out.printf("Tipo de bebida:");
-                            System.out.println("(1) Agua");
-                            System.out.println("(2) Jugo");
-                            System.out.println("(3) Bebida alcohólica");
-                            System.out.println("(4) Refresco");
-                            System.out.println("(5) Otro");
-                            System.out.println("******************************");
-                            System.out.print("Selecciona una opción: ");
-                            type = sc.nextInt();
-                            sc.nextLine();
-                            while (type > 2 && type < 1) {
-                                System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                                System.out.println("Selecciona una opción: ");
-                                type = sc.nextInt();
-                                sc.nextLine();
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    System.out.printf("Cantidad de contenido (mililitros o gramos según sea el caso): ");
-                    quantityOfContent = sc.nextDouble();
-                    sc.nextLine();
-                    catalog.addProductToCatalog(upn, name, description, price, quantity, productType, type, quantityOfContent);
-                    System.out.println("Producto añadido");
-                    product.print();
-                    break;
-                case 2:
-                    System.out.println("*****************************");
-                    System.out.println("      Eliminar producto      ");
-                    System.out.println("*****************************");
-                    System.out.printf("UPN: ");
-                    upn = sc.nextLine();
-                    while (!(catalog.exists(upn))) {
-                        System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
-                        System.out.printf("UPN: ");
-                        upn = sc.nextLine();
-                    }
-                    catalog.deleteProductFromCatalog(upn);
-                    System.out.println("Producto eliminado");
-                    break;
-                case 3:
-                    System.out.println("*****************************");
-                    System.out.println("       Editar producto       ");
-                    System.out.println("*****************************");
-                    System.out.printf("UPN: ");
-                    upn = sc.nextLine();
-                    while (!(catalog.exists(upn))) {
-                        System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
-                        System.out.printf("UPN: ");
-                        upn = sc.nextLine();
-                    }
-                    product = catalog.getProductByUPN(upn);
-                    System.out.println("¿Qué deseas editar para este producto?");
-                    System.out.println("(1) UPN");
-                    System.out.println("(2) Nombre");
-                    System.out.println("(3) Descripción");
-                    System.out.println("(4) Precio");
-                    System.out.println("******************************");
-                    System.out.print("Selecciona una opción: ");
-                    int selectedOption1 = sc.nextInt();
-                    sc.nextLine();
-                    boolean wrongOption1 = false;
-                    do {
-                        if (selectedOption1 < 4 && selectedOption1 > 0) {
-                            System.out.println("Selecciona el nuevo valor:");
                         }
-                        switch (selectedOption1) {
+                        switch (productType) {
                             case 1:
-                                System.out.printf("UPN: ");
-                                upn = sc.nextLine();
-                                while (catalog.exists(upn)) {
-                                    System.out.println("Ese UPN ya está registrado. Intenta de nuevo.");
-                                    System.out.printf("UPN: ");
-                                    upn = sc.nextLine();
+                                System.out.printf("Tipo de alimento:");
+                                System.out.println("(1) Caramelo o dulce");
+                                System.out.println("(2) Pan");
+                                System.out.println("(3) Papas fritas");
+                                System.out.println("(4) Sandwich");
+                                System.out.println("(5) Otro");
+                                System.out.println("******************************");
+                                System.out.print("Selecciona una opción: ");
+                                type = sc.nextInt();
+                                sc.nextLine();
+                                while (type > 2 && type < 1) {
+                                    System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                                    System.out.println("Selecciona una opción: ");
+                                    type = sc.nextInt();
+                                    sc.nextLine();
                                 }
-                                product.setUPN(upn);
-                                System.out.println("UPN actualizado");
                                 break;
                             case 2:
-                                System.out.printf("Nombre: ");
-                                name = sc.nextLine();
-                                product.setName(name);
-                                System.out.println("Nombre actualizado");
-                                break;
-                            case 3:
-                                System.out.printf("Descripción: ");
-                                description = sc.nextLine();
-                                product.setDescription(description);
-                                System.out.println("Descripción actualizada");
-                                break;
-                            case 4:
-                                System.out.printf("Precio: ");
-                                price = sc.nextInt();
+                                System.out.printf("Tipo de bebida:");
+                                System.out.println("(1) Agua");
+                                System.out.println("(2) Jugo");
+                                System.out.println("(3) Bebida alcohólica");
+                                System.out.println("(4) Refresco");
+                                System.out.println("(5) Otro");
+                                System.out.println("******************************");
+                                System.out.print("Selecciona una opción: ");
+                                type = sc.nextInt();
                                 sc.nextLine();
-                                product.setPrice(price);
-                                System.out.println("Precio actualizado");
+                                while (type > 2 && type < 1) {
+                                    System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                                    System.out.println("Selecciona una opción: ");
+                                    type = sc.nextInt();
+                                    sc.nextLine();
+                                }
                                 break;
                             default:
-                                wrongOption1 = true;
-                                System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                                System.out.println("Selecciona una opción: ");
-                                selectedOption1 = sc.nextInt();
-                                sc.nextLine();
                                 break;
                         }
+                        System.out.printf("Cantidad de contenido (mililitros o gramos según sea el caso): ");
+                        quantityOfContent = sc.nextDouble();
+                        sc.nextLine();
+                        catalog.addProductToCatalog(upn, name, description, price, quantity, productType, type, quantityOfContent);
+                        System.out.println("Producto añadido");
+                        product.print();
+                        break;
+                    case 2:
+                        System.out.println("*****************************");
+                        System.out.println("      Eliminar producto      ");
+                        System.out.println("*****************************");
+                        System.out.printf("UPN: ");
+                        upn = sc.nextLine();
+                        while (!(catalog.exists(upn))) {
+                            System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
+                            System.out.printf("UPN: ");
+                            upn = sc.nextLine();
+                        }
+                        catalog.deleteProductFromCatalog(upn);
+                        System.out.println("Producto eliminado");
+                        break;
+                    case 3:
+                        System.out.println("*****************************");
+                        System.out.println("       Editar producto       ");
+                        System.out.println("*****************************");
+                        System.out.printf("UPN: ");
+                        upn = sc.nextLine();
+                        while (!(catalog.exists(upn))) {
+                            System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
+                            System.out.printf("UPN: ");
+                            upn = sc.nextLine();
+                        }
+                        product = catalog.getProductByUPN(upn);
+                        System.out.println("¿Qué deseas editar para este producto?");
+                        System.out.println("(1) UPN");
+                        System.out.println("(2) Nombre");
+                        System.out.println("(3) Descripción");
+                        System.out.println("(4) Precio");
+                        System.out.println("******************************");
+                        System.out.print("Selecciona una opción: ");
+                        int selectedOption1 = sc.nextInt();
+                        sc.nextLine();
+                        boolean wrongOption1 = false;
+                        do {
+                            if (selectedOption1 < 4 && selectedOption1 > 0) {
+                                System.out.println("Selecciona el nuevo valor:");
+                            }
+                            switch (selectedOption1) {
+                                case 1:
+                                    System.out.printf("UPN: ");
+                                    upn = sc.nextLine();
+                                    while (catalog.exists(upn)) {
+                                        System.out.println("Ese UPN ya está registrado. Intenta de nuevo.");
+                                        System.out.printf("UPN: ");
+                                        upn = sc.nextLine();
+                                    }
+                                    product.setUPN(upn);
+                                    System.out.println("UPN actualizado");
+                                    break;
+                                case 2:
+                                    System.out.printf("Nombre: ");
+                                    name = sc.nextLine();
+                                    product.setName(name);
+                                    System.out.println("Nombre actualizado");
+                                    break;
+                                case 3:
+                                    System.out.printf("Descripción: ");
+                                    description = sc.nextLine();
+                                    product.setDescription(description);
+                                    System.out.println("Descripción actualizada");
+                                    break;
+                                case 4:
+                                    System.out.printf("Precio: ");
+                                    price = sc.nextInt();
+                                    sc.nextLine();
+                                    product.setPrice(price);
+                                    System.out.println("Precio actualizado");
+                                    break;
+                                default:
+                                    wrongOption1 = true;
+                                    System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                                    System.out.println("Selecciona una opción: ");
+                                    selectedOption1 = sc.nextInt();
+                                    sc.nextLine();
+                                    break;
+                            }
 
-                    } while (wrongOption1);
-                    break;
-                case 4:
-                    catalog.print();
-                default:
-                    wrongOption = true;
-                    System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
-                    System.out.println("Selecciona una opción: ");
-                    selectedOption = sc.nextInt();
-                    sc.nextLine();
-                    break;
+                        } while (wrongOption1);
+                        break;
+                    case 4:
+                        catalog.print();
+                        break;
+                    case 5:
+                        break;
+                    default:
+                        wrongOption = true;
+                        System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
+                        System.out.println("Selecciona una opción: ");
+                        selectedOption = sc.nextInt();
+                        sc.nextLine();
+                        break;
+                }
             }
         }
     }
@@ -659,7 +721,7 @@ public class TienditaSystem{
                         User desiredUser = userList.getUserByUsername(username);
                         System.out.println("¿Qué deseas editar para ese usuario?");
                         System.out.println("(1) Username");
-                        System.out.println("(2) Contrasenia");
+                        System.out.println("(2) Contraseña");
                         System.out.println("(3) Nombre(s)");
                         System.out.println("(4) Apellidos");
                         System.out.println("******************************");
@@ -685,10 +747,10 @@ public class TienditaSystem{
                                 case 2:
                                     wrongOption1 = false;
                                     System.out.println("¿Cuál es el nuevo valor?");
-                                    System.out.print("Contrasenia: ");
+                                    System.out.print("Contraseña: ");
                                     password = sc.nextLine();
                                     desiredUser.editPassword(password);
-                                    System.out.println("Contrasenia actualizada con éxito");
+                                    System.out.println("Contraseña actualizada con éxito");
                                     break;
                                 case 3:
                                     wrongOption1 = false;
@@ -732,5 +794,12 @@ public class TienditaSystem{
     }
 
     private static void saveAndExit(){
+        try {
+            saveCatalog();
+            saveUsers();
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
