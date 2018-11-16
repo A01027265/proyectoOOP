@@ -307,15 +307,14 @@ public class TienditaSystem{
                         System.out.println("*****************************");
                         System.out.println("      Carrito de compra      ");
                         System.out.println("*****************************");
-                        currentSale.printItems();
-                        System.out.printf("Productos totales: %d\n", currentSale.getTotalItems());
+                        currentSale.printCart();
                         break;
                     case 3:
                         System.out.println("****************************");
                         System.out.println("          Checkout          ");
                         System.out.println("****************************");
                         System.out.println("Aquí el resumen de la compra:");
-                        currentSale.print();
+                        currentSale.printCart();
                         break;
                     default:
                         wrongOption = true;
@@ -476,7 +475,7 @@ public class TienditaSystem{
                         System.out.print("Selecciona una opción: ");
                         productType = sc.nextInt();
                         sc.nextLine();
-                        while (productType > 2 && productType < 1) {
+                        while (!(productType < 3 && productType > 0)) {
                             System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                             System.out.println("Selecciona una opción: ");
                             productType = sc.nextInt();
@@ -494,7 +493,7 @@ public class TienditaSystem{
                                 System.out.print("Selecciona una opción: ");
                                 type = sc.nextInt();
                                 sc.nextLine();
-                                while (type > 2 && type < 1) {
+                                while (!(type < 3 && type > 0)) {
                                     System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                                     System.out.println("Selecciona una opción: ");
                                     type = sc.nextInt();
@@ -512,7 +511,7 @@ public class TienditaSystem{
                                 System.out.print("Selecciona una opción: ");
                                 type = sc.nextInt();
                                 sc.nextLine();
-                                while (type > 2 && type < 1) {
+                                while (!(type < 3 && type > 0)) {
                                     System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                                     System.out.println("Selecciona una opción: ");
                                     type = sc.nextInt();
@@ -527,7 +526,8 @@ public class TienditaSystem{
                         sc.nextLine();
                         catalog.addProductToCatalog(upn, name, description, price, quantity, productType, type, quantityOfContent);
                         System.out.println("Producto añadido");
-                        product.print();
+                        Product createdProduct = catalog.getProductByUPN(upn);
+                        createdProduct.print();
                         break;
                     case 2:
                         System.out.println("*****************************");
