@@ -194,7 +194,7 @@ public class TienditaSystem{
         ArrayList<User> userListArray = userList.getUserList();
         for (int i = 0; i < userListArray.size(); i++) {
             User user = userListArray.get(i);
-            pw.printf("%s,%s,%s,%s,%d", user.getUsername(), user.getPassword(), user.getName(), user.getLastname(), user.getUserType());
+            pw.printf("%s,%s,%s,%s,%d", user.getUsername(), user.getPassword(), user.getName(), user.getLastname(), user.getUserTypeInt());
             if (i != list.size()){
                 pw.printf("\n");
             }
