@@ -1,9 +1,3 @@
-package finalProject;
-
-import java.io.BufferedReader;
-
-import java.io.*;
-
 public class User {
 
     private String username;
@@ -20,8 +14,16 @@ public class User {
         decideUserType(userType);
     }
 
+    public User(String username, String password, String firstname, String lastname, UserType userType){
+        this.username = username;
+        this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.userType = userType;
+    }
+
     // Method to decide which user type and assign enum UserType
-    public void decideUserType(int userType){
+    private void decideUserType(int userType){
         switch (userType){
             case 1:
                 this.userType = UserType.ADMINISTRATOR;
@@ -42,6 +44,28 @@ public class User {
 
     public String getPassword(){
         return password;
+    }
+
+    public UserType getUserType(){
+        return userType;
+    }
+
+    public int getUserTypeInt(){
+        int output = 0;
+
+        switch (userType){
+            case ADMINISTRATOR:
+                output = 1;
+                break;
+            case MANAGER:
+                output = 2;
+                break;
+            case VENDOR:
+                output = 3;
+                break;
+        }
+
+        return output;
     }
 
     public String getFirstname(){
