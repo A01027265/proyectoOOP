@@ -3,7 +3,7 @@ import java.util.*;
 
 public class TienditaSystem{
     private static Scanner sc = new Scanner(System.in);
-    private static UserList userList;
+    private static UserList userList = new UserList();
     private static ProductCatalog catalog;
 
     private static String catalogFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/catalog.csv";
@@ -16,7 +16,7 @@ public class TienditaSystem{
 
         try {
             loadCatalog();
-            loadUsers();
+            userList.loadUsers();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,13 +41,13 @@ public class TienditaSystem{
 
         User currentUser = userList.getUserByUsername(username);
 
-        System.out.printf("¡Hola hola! %s\n", currentUser.getName());
+        System.out.printf("¡Hola hola! %s\n", currentUser.getFirstname());
 
-        int userType = currentUser.getType();
+        int userType = currentUser.getUserTypeInt();
 
         while(true){
             System.out.printf("Usuario: %s\n", currentUser.getUsername());
-            System.out.printf("Permisos: %s\n", currentUser.getType());
+            System.out.printf("Permisos: %s\n", currentUser.getUserTypeInt());
             System.out.println();
             switch (userType){
                 case 1:
@@ -145,21 +145,6 @@ public class TienditaSystem{
         reader.close();
     }
 
-    private static void loadUsers() throws IOException {
-        // Cargamos el csv para construir nuestros maps
-        String line;
-        File file = new File(usersFileName);
-        FileReader reader = new FileReader(file);
-        BufferedReader br = new BufferedReader(reader);
-        userList = new UserList();
-        // Recorremos cada línea para obtener la info del empleado
-        while ((line = br.readLine()) != null) {
-            String[] elements = line.split(",");
-            userList.createUser(elements[0], elements[1], elements[2], elements[3], Integer.valueOf(elements[4]));
-        }
-        reader.close();
-    }
-
     private static void saveCatalog() throws IOException {
         //TODO: WHAT DO WE DO WITH TYPE AND QUANTITY OF PRODUCT?
         File file = new File(catalogFileName);
@@ -176,25 +161,6 @@ public class TienditaSystem{
             pw.printf("%s,%s,%s,%f,%d", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
             // With type and quantity
             //pw.printf("%s,%s,%s,%f,%d,%d,%d,%f", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
-            if (i != list.size()){
-                pw.printf("\n");
-            }
-        }
-        writer.close();
-    }
-
-    private static void saveUsers() throws IOException {
-        //destino donde se creará el archivo
-        File file = new File(usersFileName);
-        file.delete();
-        file.createNewFile();
-        FileWriter writer = new FileWriter(usersFileName, true);
-        PrintWriter pw = new PrintWriter(writer);
-        // Recorremos el array de llaves para sacar la información de cada usuario y la escribimos como una nueva entrada en el csv
-        ArrayList<User> userListArray = userList.getUserList();
-        for (int i = 0; i < userListArray.size(); i++) {
-            User user = userListArray.get(i);
-            pw.printf("%s,%s,%s,%s,%d", user.getUsername(), user.getPassword(), user.getName(), user.getLastname(), user.getUserTypeInt());
             if (i != list.size()){
                 pw.printf("\n");
             }
@@ -743,7 +709,7 @@ public class TienditaSystem{
                                         System.out.print("Username: ");
                                         username = sc.nextLine();
                                     }
-                                    desiredUser.editUsername(username);
+                                    desiredUser.setUsername(username);
                                     System.out.println("Username actualizado con éxito");
                                     break;
                                 case 2:
@@ -751,7 +717,7 @@ public class TienditaSystem{
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Contraseña: ");
                                     password = sc.nextLine();
-                                    desiredUser.editPassword(password);
+                                    desiredUser.setPassword(password);
                                     System.out.println("Contraseña actualizada con éxito");
                                     break;
                                 case 3:
@@ -759,7 +725,7 @@ public class TienditaSystem{
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Nombre(s): ");
                                     name = sc.nextLine();
-                                    desiredUser.editName(name);
+                                    desiredUser.setFirstname(name);
                                     System.out.println("Nombre(s) editado(s) con éxito");
                                     break;
                                 case 4:
@@ -767,7 +733,7 @@ public class TienditaSystem{
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Apellidos: ");
                                     lastname = sc.nextLine();
-                                    desiredUser.editLastname(lastname);
+                                    desiredUser.setLastname(lastname);
                                     System.out.println("Apellidos editados con éxito");
                                     break;
                                 default:
@@ -798,7 +764,7 @@ public class TienditaSystem{
     private static void saveAndExit(){
         try {
             saveCatalog();
-            saveUsers();
+            userList.saveUsers();
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
