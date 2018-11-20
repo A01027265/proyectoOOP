@@ -1,5 +1,3 @@
-import java.util.InputMismatchException;
-
 public class Food extends Product{
 
     // Instance Variables
@@ -14,7 +12,7 @@ public class Food extends Product{
     }
 
     // Decides what TypeOfBeverage to assign depending on the integer received
-    private void decideType(int type) throws InputMismatchException{
+    public void decideType(int type){
         switch(type){
             case 1:
                 this.type = TypeOfFood.CANDY;
