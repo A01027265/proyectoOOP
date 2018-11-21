@@ -1,13 +1,17 @@
+package finalProject;
+
 import java.io.*;
 import java.util.*;
 
 public class TienditaSystem{
     private static Scanner sc = new Scanner(System.in);
     private static UserList userList = new UserList();
-    private static ProductCatalog catalog;
+    private static ProductCatalog catalog = new ProductCatalog();
 
+    /*
     private static String catalogFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/catalog.csv";
     private static String usersFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/users.csv";
+    */
 
     public static void main(String[] args) {
         String username;
@@ -15,7 +19,7 @@ public class TienditaSystem{
         int selectedOption;
 
         try {
-            loadCatalog();
+            catalog.loadCatalog();
             userList.loadUsers();
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,48 +130,6 @@ public class TienditaSystem{
         }
     }
 
-    private static void loadCatalog() throws IOException {
-        //TODO: WHAT DO WE DO WITH TYPE AND QUANTITY OF PRODUCT?
-        // Cargamos el csv para construir nuestros maps
-        String line;
-        File file = new File(catalogFileName);
-        FileReader reader = new FileReader(file);
-        catalog = new ProductCatalog();
-        // Recorremos cada línea para obtener la info del producto
-        while ((line = br.readLine()) != null) {
-            String[] elements;
-            elements = line.split(",");
-            // Without type and quantity
-            catalog.addProductToCatalog(elements[0],elements[1],elements[2],Double.valueOf(elements[3]),Integer.valueOf(elements[4]),1,1,1);
-            // With type and quantity
-            //catalog.addProductToCatalog(elements[0],elements[1],elements[2],Double.valueOf(elements[3]),Integer.valueOf(elements[4]),Integer.valueOf(elements[5]),Integer.valueOf(elements[6]),Double.valueOf(elements[7]));
-        }
-        reader.close();
-    }
-
-    private static void saveCatalog() throws IOException {
-        //TODO: WHAT DO WE DO WITH TYPE AND QUANTITY OF PRODUCT?
-        File file = new File(catalogFileName);
-        file.delete();
-        file.createNewFile();
-        FileWriter writer = new FileWriter(catalogFileName, true);
-        PrintWriter pw = new PrintWriter(writer);
-        // Recorremos el array de llaves para sacar la información de cada empleado y la escribimos como una nueva entrada en el csv
-        // Recorremos el array de llaves para sacar la información de cada usuario y la escribimos como una nueva entrada en el csv
-        ArrayList<Product> catalogArray = catalog.getUserList();
-        for (int i = 0; i < catalogArray.size(); i++) {
-            Product product = catalogArray.get(i);
-            // Without type and quantity
-            pw.printf("%s,%s,%s,%f,%d", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
-            // With type and quantity
-            //pw.printf("%s,%s,%s,%f,%d,%d,%d,%f", product.getUPN(), product.getName(), product.getDescription(), product.getPrice(), product.getQuantity());
-            if (i != list.size()){
-                pw.printf("\n");
-            }
-        }
-        writer.close();
-    }
-
     private static void adminPrompt(){
         System.out.println("¿De qué trae antojo hoy, administrador?");
         System.out.println("******************************");
@@ -264,7 +226,7 @@ public class TienditaSystem{
                             System.out.println(e);            // Always must return something
                             System.out.println("Exception");
                         }
-                        product.setQuantity(product.getQuantity - quantity);
+                        product.setQuantity(product.getQuantity() - quantity);
                         soldProduct.setQuantity(quantity);
                         currentSale.addItem(soldProduct);
                         System.out.println("Producto añadido al carrito de compra");
@@ -295,6 +257,7 @@ public class TienditaSystem{
         }
     }
 
+    // NECESITA REVISION
     private static void manageInventory(){
         boolean wrongProduct;
         Product product;
@@ -360,6 +323,8 @@ public class TienditaSystem{
                                 }
                             }
                         }
+                        // Agregue la linea de abajo porq falto inicializar product despues de wrongproduct loop
+                        product = catalog.getProductByUPN(upn);
                         System.out.printf("Unidades disponibles de ese producto: %d): ", product.getQuantity());
                         System.out.printf("Cantidad: ");
                         quantity = sc.nextInt();
@@ -387,6 +352,7 @@ public class TienditaSystem{
         }
     }
 
+    // NECESITA REVISION
     private static void manageCatalog(){
         String upn;
         String name;
@@ -491,6 +457,8 @@ public class TienditaSystem{
                         System.out.printf("Cantidad de contenido (mililitros o gramos según sea el caso): ");
                         quantityOfContent = sc.nextDouble();
                         sc.nextLine();
+
+                        // Mejor agrega producto por agregacion, para poder hacer product.print. falta inicializar type
                         catalog.addProductToCatalog(upn, name, description, price, quantity, productType, type, quantityOfContent);
                         System.out.println("Producto añadido");
                         product.print();
@@ -763,7 +731,7 @@ public class TienditaSystem{
 
     private static void saveAndExit(){
         try {
-            saveCatalog();
+            catalog.saveCatalog();
             userList.saveUsers();
             System.exit(0);
         } catch (IOException e) {
