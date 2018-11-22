@@ -30,6 +30,7 @@ public class UserList {
         sortAndAddToArray(user, username);
     }
 
+    // Orders the catalog
     private void sortAndAddToArray(User user,String username){
         int index = -1;
         for (int i = 0; i < users.size(); i++) {

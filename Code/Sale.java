@@ -12,12 +12,14 @@ public class Sale {
     private final double TAXRATE = 0.16;
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
+    //Constructor
     public Sale(){
         this.items = new ArrayList<>();
         date = LocalDateTime.now();
         timestamp = Timestamp.valueOf(date);
     }
 
+    // Accessers
     public ArrayList<Product> getItems() {
         return items;
     }
@@ -43,7 +45,7 @@ public class Sale {
         subtotal += item.getTotalPrice();
     }
     
-
+    // Imprimir con alineación los elementos del carrito de compra
     public void printCart(){
         System.out.printf("Fecha:\n");
         System.out.println(dtf.format(date));
@@ -60,14 +62,12 @@ public class Sale {
         System.out.printf("%-20s %15.2f\n", "Total:", getSaleTotal());
     }
 
-    private double getTotalPrice(int quantity, double price){
-        return quantity*price;
-    }
-
+    // Obtener el IVA de los productos
     private double getTax(){
         return subtotal * TAXRATE;
     }
 
+    // Obtener el total de la compra
     private double getSaleTotal(){
         return subtotal + getTax();
     }

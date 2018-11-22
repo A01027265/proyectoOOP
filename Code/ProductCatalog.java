@@ -31,6 +31,7 @@ public class ProductCatalog {
         }
     }
 
+    // Orders the catalog
     private void sortAndAddToArray(Product p, String upn){
         int index = -1;
         for (int i = 0; i < products.size(); i++) {

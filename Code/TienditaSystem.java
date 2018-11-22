@@ -8,11 +8,6 @@ public class TienditaSystem{
     private static String username = "";
     private static String password = "";
 
-    /*
-    private static String catalogFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/catalog.csv";
-    private static String usersFileName = "/Users/tiagohernan/Documents/Tec/2sem/Progra/ProyectoFinal/users.csv";
-    */
-
     public static void main(String[] args) {
         int selectedOption;
 
@@ -23,9 +18,10 @@ public class TienditaSystem{
             e.printStackTrace();
         }
 
+        // Bienvenida al usuario
         System.out.println("*********************************************");
-        System.out.println("************ Quiubo, estás en la ************");
-        System.out.println("************ mejor tiendita ever ************");
+        System.out.println("************* ¡Hola!, estás en *************");
+        System.out.println("************* la mejor tiendita ************");
         System.out.println("*********************************************");
         System.out.println("**************** TITANSHOP ******************");
         System.out.println("*********************************************");
@@ -42,10 +38,12 @@ public class TienditaSystem{
 
         int userType = currentUser.getUserTypeInt();
 
+        // Repetir el menú hasta que el usuario decida salir
         while(true){
             System.out.printf("Usuario: %s\n", currentUser.getUsername());
             System.out.printf("Nivel de permisos: %s\n", currentUser.getUserTypeInt());
             System.out.println();
+            // Enviar menú dependiendo del usuario
             switch (userType){
                 case 1:
                     adminPrompt();
@@ -65,6 +63,7 @@ public class TienditaSystem{
             sc.nextLine();
 
             boolean notCorrect = true;
+            //Validar el input del usuario
             while (notCorrect) {
                 switch (userType){
                     case 1:
@@ -95,6 +94,7 @@ public class TienditaSystem{
                 }
             }
 
+            // Ejecutar opción elegida por usuario
             switch (selectedOption){
                 case 1:
                     saveAndExit();
@@ -118,6 +118,7 @@ public class TienditaSystem{
         }
     }
 
+    //Obtener la contraseña del usuario sin que se visualicen los caracteres en consola
     private static void getUserAndPassword(){
         System.out.printf("Usuario: ");
         username = sc.nextLine();
@@ -142,6 +143,7 @@ public class TienditaSystem{
         }
     }
 
+    // Prompt para usuario administrador
     private static void adminPrompt(){
         System.out.println("¿Qué desea hacer, administrador?");
         System.out.println("******************************");
@@ -154,6 +156,7 @@ public class TienditaSystem{
         System.out.print("Selecciona una opción: ");
     }
 
+    // Prompt para usuario gerente
     private static void managerPrompt(){
         System.out.println("Señor Gerente, ¿qué quiere hacer?");
         System.out.println("******************************");
@@ -165,6 +168,7 @@ public class TienditaSystem{
         System.out.print("Selecciona una opción: ");
     }
 
+    // Prompt para usuario vendedor
     private static void vendorPrompt(){
         System.out.println("Vamos a hacer muchos varos $$$, estimado vendedor.");
         System.out.println("******************************");
@@ -174,6 +178,7 @@ public class TienditaSystem{
         System.out.print("Selecciona una opción: ");
     }
 
+    // Método para vender productos
     private static void sellProduct(){
         String upn;
         int quantity;
@@ -181,6 +186,7 @@ public class TienditaSystem{
         Product soldProduct;
         Sale currentSale =  new Sale();
         int selectedOption = 0;
+        // Repetir hasta que el usuario seleccione la opción de salir
         while (selectedOption != 3) {
             System.out.println("*****************************");
             System.out.println("            Venta            ");
@@ -193,16 +199,19 @@ public class TienditaSystem{
             selectedOption = sc.nextInt();
             sc.nextLine();
             boolean wrongOption = true;
+            // Validar input del usuario
             while(wrongOption){
                 wrongOption = false;
                 switch (selectedOption) {
                     case 1:
+                        // Añadir producto
                         System.out.println("*****************************");
                         System.out.println("       Añadir producto       ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
                         boolean wrongProduct = true;
+                        // Validar upn ingresado
                         while (wrongProduct) {
                             if (!(catalog.exists(upn))) {
                                 System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
@@ -223,6 +232,7 @@ public class TienditaSystem{
                         System.out.printf("Cantidad: ");
                         quantity = sc.nextInt();
                         sc.nextLine();
+                        // Validar cantidad deseada, conforme a la cantidad de elementos disponibles
                         while (quantity > product.getQuantity()) {
                             System.out.println("No hay suficientes unidades. Escoge un número menor.");
                             System.out.printf("Cantidad: ");
@@ -241,12 +251,14 @@ public class TienditaSystem{
                         }
                         break;
                     case 2:
+                        // Imprimir carrito de compra
                         System.out.println("*****************************");
                         System.out.println("      Carrito de compra      ");
                         System.out.println("*****************************");
                         currentSale.printCart();
                         break;
                     case 3:
+                        // Terminar la compra e imprimir resumen
                         System.out.println("****************************");
                         System.out.println("          Checkout          ");
                         System.out.println("****************************");
@@ -261,11 +273,13 @@ public class TienditaSystem{
                         sc.nextLine();
                         break;
                 }
+                // Guardar cambios efectuados
                 save();
             }
         }
     }
 
+    // Método para administrar inventario
     private static void manageInventory(){
         boolean wrongProduct;
         Product product;
@@ -273,6 +287,7 @@ public class TienditaSystem{
         String upn;
         int quantity;
 
+        // Repetir hasta que el usuario seleccione la opción de salir
         while(selectedOption != 4) {
             System.out.println("******************************");
             System.out.println("    Administrar inventario    ");
@@ -286,15 +301,18 @@ public class TienditaSystem{
             selectedOption = sc.nextInt();
             sc.nextLine();
             boolean wrongOption = true;
+            // Validar input del usuario
             while (wrongOption) {
                 wrongOption = false;
                 switch (selectedOption) {
                     case 1:
+                        // Añadir unidades a un producto
                         System.out.println("*****************************");
                         System.out.println("       Añadir unidades       ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
+                        // Validar que el upn existe
                         while (!(catalog.exists(upn))) {
                             System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
                             System.out.printf("UPN: ");
@@ -309,12 +327,14 @@ public class TienditaSystem{
                         System.out.println("Inventario actualizado");
                         break;
                     case 2:
+                        // Retirar unidades a un producto
                         System.out.println("*****************************");
                         System.out.println("       Retirar unidades      ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
                         wrongProduct = true;
+                        // Validar que el upn existe
                         while (wrongProduct) {
                             if (!(catalog.exists(upn))) {
                                 System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
@@ -337,6 +357,7 @@ public class TienditaSystem{
                         System.out.printf("Cantidad de unidades a retirar: ");
                         quantity = sc.nextInt();
                         sc.nextLine();
+                        // Validar que el número de unidades deseado sea menor al actual
                         while (quantity > product.getQuantity()) {
                             System.out.println("No hay suficientes unidades. Escoge un número menor.");
                             System.out.printf("Cantidad de unidades a retirar: ");
@@ -347,9 +368,11 @@ public class TienditaSystem{
                         System.out.println("Inventario actualizado");
                         break;
                     case 3:
+                        // Imprimir productos
                         catalog.print();
                         break;
                     case 4:
+                        // Regresar al menú principal
                         break;
                     default:
                         wrongOption = true;
@@ -364,7 +387,7 @@ public class TienditaSystem{
         }
     }
 
-    // NECESITA REVISION
+    // Método para Administrar catálogo
     private static void manageCatalog(){
         String upn;
         String name;
@@ -377,6 +400,7 @@ public class TienditaSystem{
         int selectedOption = 0;
         Product product;
 
+        // Repetir hasta que el usuario seleccione la opción de salir al menú principal
         while(selectedOption != 5) {
             System.out.println("******************************");
             System.out.println("     Administrar catálogo     ");
@@ -391,15 +415,18 @@ public class TienditaSystem{
             selectedOption = sc.nextInt();
             sc.nextLine();
             boolean wrongOption = true;
+            // Validar input del usuario
             while (wrongOption) {
                 wrongOption = false;
                 switch (selectedOption) {
                     case 1:
+                        // Opción para añadir un producto
                         System.out.println("*****************************");
                         System.out.println("       Añadir producto       ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
+                        // Validar que el upn ingresado no exista
                         while (catalog.exists(upn)) {
                             System.out.println("Ese UPN ya existe. Intenta de nuevo.");
                             System.out.printf("UPN: ");
@@ -422,6 +449,7 @@ public class TienditaSystem{
                         System.out.print("Selecciona una opción: ");
                         productType = sc.nextInt();
                         sc.nextLine();
+                        // Validar input del usuario
                         while (!(productType < 3 && productType > 0)) {
                             System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                             System.out.print("Selecciona una opción: ");
@@ -430,6 +458,7 @@ public class TienditaSystem{
                         }
                         switch (productType) {
                             case 1:
+                                // En caso de que selecione ALIMENTO
                                 System.out.println("Tipo de alimento:");
                                 System.out.println("(1) Caramelo o dulce");
                                 System.out.println("(2) Pan");
@@ -440,6 +469,7 @@ public class TienditaSystem{
                                 System.out.print("Selecciona una opción: ");
                                 type = sc.nextInt();
                                 sc.nextLine();
+                                // Validar input del usuario
                                 while (!(type < 6 && type > 0)) {
                                     System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                                     System.out.print("Selecciona una opción: ");
@@ -448,6 +478,7 @@ public class TienditaSystem{
                                 }
                                 break;
                             case 2:
+                                // En caso de que selecione BEBIDA
                                 System.out.println("Tipo de bebida:");
                                 System.out.println("(1) Agua");
                                 System.out.println("(2) Jugo");
@@ -458,6 +489,7 @@ public class TienditaSystem{
                                 System.out.print("Selecciona una opción: ");
                                 type = sc.nextInt();
                                 sc.nextLine();
+                                // Validar input del usuario
                                 while (!(type < 6 && type > 0)) {
                                     System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                                     System.out.print("Selecciona una opción: ");
@@ -472,19 +504,22 @@ public class TienditaSystem{
                         quantityOfContent = sc.nextDouble();
                         sc.nextLine();
 
-                        // Mejor agrega producto por agregacion, para poder hacer product.print. falta inicializar type
+                        // Crear producto en el catálogo
                         catalog.addProductToCatalog(upn, name, description, price, quantity, productType, type, quantityOfContent);
                         System.out.println("Producto añadido");
                         Product createdProduct = catalog.getProductByUPN(upn);
                         createdProduct.print();
+                        // Guardar cambios
                         save();
                         break;
                     case 2:
+                        // Opción para eliminar un producto del catálogo
                         System.out.println("*****************************");
                         System.out.println("      Eliminar producto      ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
+                        // Validar que el UPN exista
                         while (!(catalog.exists(upn))) {
                             System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
                             System.out.printf("UPN: ");
@@ -492,20 +527,24 @@ public class TienditaSystem{
                         }
                         catalog.deleteProductFromCatalog(upn);
                         System.out.println("Producto eliminado");
+                        // Guardar cambios efectuados
                         save();
                         break;
                     case 3:
+                        // Opción para editar un producto
                         System.out.println("*****************************");
                         System.out.println("       Editar producto       ");
                         System.out.println("*****************************");
                         System.out.printf("UPN: ");
                         upn = sc.nextLine();
+                        // Validar input del usuario
                         while (!(catalog.exists(upn))) {
                             System.out.println("Ese UPN no está registrado. Intenta de nuevo.");
                             System.out.printf("UPN: ");
                             upn = sc.nextLine();
                         }
                         product = catalog.getProductByUPN(upn);
+                        // Solicitar dato para editar deseado
                         System.out.println("¿Qué deseas editar para este producto?");
                         System.out.println("(1) UPN");
                         System.out.println("(2) Nombre");
@@ -516,12 +555,14 @@ public class TienditaSystem{
                         int selectedOption1 = sc.nextInt();
                         sc.nextLine();
                         boolean wrongOption1 = false;
+                        // Repetir mientras la opción seleccionada no sea correcta
                         do {
                             if (selectedOption1 < 4 && selectedOption1 > 0) {
                                 System.out.println("Selecciona el nuevo valor:");
                             }
                             switch (selectedOption1) {
                                 case 1:
+                                    // Editar UPN
                                     System.out.printf("UPN: ");
                                     upn = sc.nextLine();
                                     while (catalog.exists(upn)) {
@@ -533,18 +574,21 @@ public class TienditaSystem{
                                     System.out.println("UPN actualizado");
                                     break;
                                 case 2:
+                                    // Editar Nombre
                                     System.out.printf("Nombre: ");
                                     name = sc.nextLine();
                                     product.setName(name);
                                     System.out.println("Nombre actualizado");
                                     break;
                                 case 3:
+                                    // Editar descripción
                                     System.out.printf("Descripción: ");
                                     description = sc.nextLine();
                                     product.setDescription(description);
                                     System.out.println("Descripción actualizada");
                                     break;
                                 case 4:
+                                    // Editar precio
                                     System.out.printf("Precio: ");
                                     price = sc.nextInt();
                                     sc.nextLine();
@@ -563,9 +607,11 @@ public class TienditaSystem{
                         } while (wrongOption1);
                         break;
                     case 4:
+                        // Imprimir catálogo de productos
                         catalog.print();
                         break;
                     case 5:
+                        // Regresar al menú principal
                         break;
                     default:
                         wrongOption = true;
@@ -579,6 +625,7 @@ public class TienditaSystem{
         }
     }
 
+    // Método para administrar usuarios
     private static void manageUsers(){
         int selectedOption = 0;
         String name;
@@ -586,6 +633,7 @@ public class TienditaSystem{
         String username;
         String password;
 
+        // Repetir hasta que el usuario seleccione la opción para salir
         while(selectedOption != 5) {
             System.out.println("******************************");
             System.out.println("     Administrar usuarios     ");
@@ -601,9 +649,11 @@ public class TienditaSystem{
             sc.nextLine();
 
             boolean wrongOption = true;
+            // Repetir hasta que el usuario seleccione una opción válida
             while (wrongOption) {
                 switch(selectedOption){
                     case 1:
+                        // Opción para agregar un usuario
                         wrongOption = false;
                         System.out.println("******************************");
                         System.out.println("        Agregar usuario       ");
@@ -616,6 +666,7 @@ public class TienditaSystem{
                         System.out.print("Selecciona una opción: ");
                         int userType = sc.nextInt();
                         sc.nextLine();
+                        // Validar input del usuario
                         while (userType > 3 && userType < 1) {
                             System.out.println("Esa opción no es válida, por favor escribe un número en el rango.");
                             System.out.print("Selecciona una opción: ");
@@ -628,6 +679,7 @@ public class TienditaSystem{
                         lastname = sc.nextLine();
                         System.out.printf("Username: ");
                         username = sc.nextLine();
+                        // Validar que el username no existe
                         while (userList.exists(username)) {
                             System.out.println("Ese username ya existe, prueba de nuevo.");
                             System.out.printf("Username: ");
@@ -640,6 +692,7 @@ public class TienditaSystem{
                         save();
                         break;
                     case 2:
+                        // Opción para eliminar un usuario
                         wrongOption = false;
                         System.out.println("******************************");
                         System.out.println("       Eliminar usuario       ");
@@ -647,6 +700,7 @@ public class TienditaSystem{
                         System.out.println("Para eliminar un usuario ingresa el username");
                         System.out.printf("Username: ");
                         username = sc.nextLine();
+                        // Validar que el usuario existe
                         while (!userList.exists(username)) {
                             System.out.println("Ese username no existe, prueba de nuevo.");
                             System.out.printf("Username: ");
@@ -657,6 +711,7 @@ public class TienditaSystem{
                         save();
                         break;
                     case 3:
+                        //Opción para editar un usuario
                         wrongOption = false;
                         System.out.println("******************************");
                         System.out.println("        Editar usuario        ");
@@ -664,12 +719,14 @@ public class TienditaSystem{
                         System.out.println("¿Cuál es el username de la usuario que quieres editar?");
                         System.out.printf("Username: ");
                         username = sc.nextLine();
+                        // Validar que el username existe
                         while (!userList.exists(username)) {
                             System.out.println("Ese username no existe, prueba de nuevo.");
                             System.out.printf("Username: ");
                             username = sc.nextLine();
                         }
                         User desiredUser = userList.getUserByUsername(username);
+                        // Preguntar dato que se desea editar
                         System.out.println("¿Qué deseas editar para ese usuario?");
                         System.out.println("(1) Username");
                         System.out.println("(2) Contraseña");
@@ -680,9 +737,11 @@ public class TienditaSystem{
                         int selectedOption1 = sc.nextInt();
                         sc.nextLine();
                         boolean wrongOption1 = true;
+                        // Repetir hasta que se ingrese una opción válida
                         while (wrongOption1) {
                             switch (selectedOption1){
                                 case 1:
+                                    // Editar username
                                     wrongOption1 = false;
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Username: ");
@@ -696,6 +755,7 @@ public class TienditaSystem{
                                     System.out.println("Username actualizado con éxito");
                                     break;
                                 case 2:
+                                    // Editar contraseña
                                     wrongOption1 = false;
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Contraseña: ");
@@ -704,6 +764,7 @@ public class TienditaSystem{
                                     System.out.println("Contraseña actualizada con éxito");
                                     break;
                                 case 3:
+                                    // Editar nombre(s)
                                     wrongOption1 = false;
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Nombre(s): ");
@@ -712,6 +773,7 @@ public class TienditaSystem{
                                     System.out.println("Nombre(s) editado(s) con éxito");
                                     break;
                                 case 4:
+                                    // Editar apellidos
                                     wrongOption1 = false;
                                     System.out.println("¿Cuál es el nuevo valor?");
                                     System.out.print("Apellidos: ");
@@ -729,11 +791,13 @@ public class TienditaSystem{
                         }
                         break;
                     case 4:
+                        // Imprimir usuarios registrados
                         wrongOption = false;
                         System.out.printf("\nUsuarios registrados:\n");
                         userList.print();
                         break;
                     case 5:
+                        // Regresar al menú principal
                         wrongOption = false;
                         break;
                     default:
@@ -746,11 +810,13 @@ public class TienditaSystem{
         }
     }
 
+    // Guardar y salir
     private static void saveAndExit(){
         save();
         System.exit(0);
     }
 
+    // Guardar cambios efectuados a catálogo de productos y usuarios
     private static void save(){
         try {
             catalog.saveCatalog();
