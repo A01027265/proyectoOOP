@@ -5,11 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ProductCatalog {
 
     // ArrayList with all Users
     private ArrayList<Product> products = new ArrayList<>();
+    private static final String PATHNAME = "products.csv";
 
     /**Create and delete product**/
     // Creates a product in catalog
@@ -19,14 +21,44 @@ public class ProductCatalog {
             case 1:
                 Product food = new Food(upn, name, price, quantity, massOrVol, type);
                 food.setDescription(description);
-                products.add(food);
+                sortAndAddToArray(food, upn);
                 break;
             case 2:
                 Product beverage = new Beverage(upn, name, price, quantity, massOrVol, type);
                 beverage.setDescription(description);
-                products.add(beverage);
+                sortAndAddToArray(beverage, upn);
                 break;
         }
+    }
+
+    private void sortAndAddToArray(Product p, String upn){
+        int index = -1;
+        for (int i = 0; i < products.size(); i++) {
+            for (int j = 0; j < upn.length(); j++) {
+                if (j < products.get(i).getUPN().length()) {
+                    char character = upn.toLowerCase().charAt(j);
+                    int ascii = (int) character;
+                    char characterToCompare = products.get(i).getUPN().toLowerCase().charAt(j);
+                    int asciiToCompare = (int) characterToCompare;
+                    if (ascii < asciiToCompare) {
+                        index = i;
+                        break;
+                    } else if (ascii > asciiToCompare) {
+                        break;
+                    }
+                }
+
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        if (index == -1) {
+            products.add(p);
+        } else{
+            products.add(index, p);
+        }
+
     }
 
     // Deletes a product and all of its inventory from catalog
@@ -92,14 +124,16 @@ public class ProductCatalog {
 
     // Prints List of Products in Catalog
     public void print(){
+        System.out.println();
         for(Product p : products)
             p.print();
+        System.out.printf("Total: %d productos\n", products.size());
     }
 
     /**Load and save Catalog**/
     // Loads Product Catalog
     public void loadCatalog() throws IOException {
-        File file = new File("products.csv");
+        File file = new File(PATHNAME);
         FileReader reader = new FileReader(file);
         BufferedReader br = new BufferedReader(reader);
 
@@ -118,7 +152,7 @@ public class ProductCatalog {
 
     // Saves Product Catalog
     public void saveCatalog() throws IOException {
-        File file = new File("products.csv");
+        File file = new File(PATHNAME);
 
         file.delete();
         file.createNewFile();
@@ -130,12 +164,12 @@ public class ProductCatalog {
             int productType;
             if(p instanceof Food){
                 productType = 1;
-                pw.printf("%s,%s,%s,%d,%i,%i,%i,%d", p.getUPN(), p.getName(), p.getDescription(), p.getPrice(),
+                pw.printf("%s,%s,%s,%.2f,%d,%d,%d,%.2f", p.getUPN(), p.getName(), p.getDescription(), p.getPrice(),
                         p.getQuantity(), productType, ((Food) p).getTypeInt(), ((Food) p).getMass());
                 pw.printf("\n");
             }else if(p instanceof Beverage){
                 productType = 2;
-                pw.printf("%s,%s,%s,%d,%i,%i,%i,%d", p.getUPN(), p.getName(), p.getDescription(), p.getPrice(),
+                pw.printf("%s,%s,%s,%.2f,%d,%d,%d,%.2f", p.getUPN(), p.getName(), p.getDescription(), p.getPrice(),
                         p.getQuantity(), productType, ((Beverage) p).getTypeInt(), ((Beverage) p).getVolume());
                 pw.printf("\n");
             }

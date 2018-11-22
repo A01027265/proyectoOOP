@@ -15,6 +15,10 @@ public class Product implements Cloneable{
         this.quantity = quantity;
     }
 
+    public Product(){
+
+    }
+
     // Clone override to be able to make a copy of this object
     @Override
     public Object clone() throws CloneNotSupportedException{
@@ -32,6 +36,11 @@ public class Product implements Cloneable{
 
     public double getPrice(){
         return price;
+    }
+
+    public double getTotalPrice(){
+        double totalPrice = this.price * this.quantity;
+        return totalPrice;
     }
 
     public int getQuantity(){
@@ -65,11 +74,11 @@ public class Product implements Cloneable{
 
     // toString y print
     public String toString(){
-        return "UPN: " + upn + ", Name: " + name + ", Description: " + description +
-                ", Price: " + price + ", Quantity: " + quantity;
+        return String.format("UPN: %s, Nombre: %s, Descripción: %s, Precio: %.2f, Cantidad: %d", upn, name, description, price, quantity);
     }
 
     public void print(){
         System.out.println(this.toString());
+        System.out.println();
     }
 }
