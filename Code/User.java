@@ -5,6 +5,7 @@ public class User {
     private String firstname, lastname;
     private UserType userType;
 
+    // Constructor
     public User(String username, String password, String firstname, String lastname, int userType){
         this.username = username;
         this.password = password;
@@ -13,18 +14,87 @@ public class User {
         decideUserType(userType);
     }
 
-    public void decideUserType(int userType){
+    public User(String username, String password, String firstname, String lastname, UserType userType){
+        this.username = username;
+        this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.userType = userType;
+    }
+
+    // Method to decide which user type and assign enum UserType
+    private void decideUserType(int userType){
         switch (userType){
             case 1:
-                userType = User.ADMINISTRATOR;
+                this.userType = UserType.ADMINISTRATOR;
                 break;
             case 2:
-                userType = User.MANAGER;
+                this.userType = UserType.MANAGER;
                 break;
             case 3:
-                userType = User.VENDOR;
+                this.userType = UserType.VENDOR;
                 break;
         }
+    }
+
+    // Accessors
+    public String getUsername(){
+        return username;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    public UserType getUserType(){
+        return userType;
+    }
+
+    public int getUserTypeInt(){
+        int output = 0;
+
+        switch (userType){
+            case ADMINISTRATOR:
+                output = 1;
+                break;
+            case MANAGER:
+                output = 2;
+                break;
+            case VENDOR:
+                output = 3;
+                break;
+        }
+
+        return output;
+    }
+
+    public String getFirstname(){
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getFullname(){
+        return firstname + " " + lastname;
+    }
+
+    // Mutators
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
+    public void setFirstname(String firstname){
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname){
+        this.lastname = lastname;
     }
 
 }
