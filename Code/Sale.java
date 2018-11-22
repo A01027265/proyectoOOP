@@ -12,12 +12,14 @@ public class Sale {
     private final double TAXRATE = 0.16;
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
+    //Constructor
     public Sale(){
         this.items = new ArrayList<>();
         date = LocalDateTime.now();
         timestamp = Timestamp.valueOf(date);
     }
 
+    // Accessers
     public ArrayList<Product> getItems() {
         return items;
     }
@@ -43,29 +45,29 @@ public class Sale {
         subtotal += item.getTotalPrice();
     }
     
-
+    // Imprimir con alineación los elementos del carrito de compra
     public void printCart(){
         System.out.printf("Fecha:\n");
         System.out.println(dtf.format(date));
+        String titleTemplate = "%-10s %15s %15s %15s %15s%n";
+        System.out.printf(titleTemplate, "Item", "Nombre", "Cantidad", "Precio U", "Precio T");
         for (int i = 0; i < items.size(); i++) {
             Product item = items.get(i);
-            System.out.printf("No.\t\tNombre\t\tCantidad\t\tPrecio U\t\tPrecio T\n");
-            System.out.printf("%d\t\t%s\t\t%d\t\t%f\t\t%f\n", i+1, item.getName(), item.getQuantity(), item.getPrice(), item.getTotalPrice());
+            String template = "%-10d %15s %15d %15.2f %15.2f%n";
+            System.out.printf(template, i+1, item.getName(), item.getQuantity(), item.getPrice(), item.getTotalPrice());
         }
-        System.out.printf("\nProductos totales: %d\n", items.size());
-        System.out.printf("Subtotal: %f\n", subtotal);
-        System.out.printf("IVA: %f\n", getTax());
-        System.out.printf("Total: %f\n", getSaleTotal());
+        System.out.printf("\n%-20s %15d\n", "Productos totales:", items.size());
+        System.out.printf("%-20s %15.2f\n","Subtotal:", subtotal);
+        System.out.printf("%-20s %15.2f\n", "IVA:", getTax());
+        System.out.printf("%-20s %15.2f\n", "Total:", getSaleTotal());
     }
 
-    private double getTotalPrice(int quantity, double price){
-        return quantity*price;
-    }
-
+    // Obtener el IVA de los productos
     private double getTax(){
         return subtotal * TAXRATE;
     }
 
+    // Obtener el total de la compra
     private double getSaleTotal(){
         return subtotal + getTax();
     }

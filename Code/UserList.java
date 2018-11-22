@@ -10,6 +10,7 @@ public class UserList {
 
     // ArrayList with all Users
     private ArrayList<User> users = new ArrayList<>();
+    private static final String PATHNAME = "users.csv";
 
     // Confirms login is correct (both user and pass)
     public boolean login(String username, String password){
@@ -25,7 +26,39 @@ public class UserList {
     /**Create and Delete User Methods**/
     // Creates user and adds it to ArrayList
     public void createUser(String username, String password, String firstname, String lastname, int userType){
-        users.add(new User(username, password, firstname, lastname, userType));
+        User user = new User(username, password, firstname, lastname, userType);
+        sortAndAddToArray(user, username);
+    }
+
+    // Orders the catalog
+    private void sortAndAddToArray(User user,String username){
+        int index = -1;
+        for (int i = 0; i < users.size(); i++) {
+            for (int j = 0; j < username.length(); j++) {
+                if (j < users.get(i).getUsername().length()) {
+                    char character = username.toLowerCase().charAt(j);
+                    int ascii = (int) character;
+                    char characterToCompare = users.get(i).getUsername().toLowerCase().charAt(j);
+                    int asciiToCompare = (int) characterToCompare;
+                    if (ascii < asciiToCompare) {
+                        index = i;
+                        break;
+                    } else if (ascii > asciiToCompare) {
+                        break;
+                    }
+                }
+
+            }
+            if (index != -1) {
+                break;
+            }
+        }
+        if (index == -1) {
+            users.add(user);
+        } else{
+            users.add(index, user);
+        }
+
     }
 
     // Deletes user from ArrayList
@@ -70,14 +103,19 @@ public class UserList {
 
     // Prints list of users
     public void print(){
-        for(User u : users)
-            System.out.println(u.getUsername());
+        int index = 1;
+        for(User u : users) {
+            System.out.printf("%d\n%s\nNombre: %s | Apellidos: %s\n", index, u.getUsername(), u.getFirstname(), u.getLastname());
+            System.out.println();
+            index++;
+        }
+        System.out.printf("Total: %d usuarios\n", users.size());
     }
 
     /**Load and Save Methods**/
     // Loads User List
     public void loadUsers() throws IOException {
-        File file = new File("users.csv");
+        File file = new File(PATHNAME);
         FileReader reader = new FileReader(file);
         BufferedReader br = new BufferedReader(reader);
 
@@ -94,7 +132,7 @@ public class UserList {
 
     // Saves User List
     public void saveUsers() throws IOException {
-        File file = new File("users.csv");
+        File file = new File(PATHNAME);
 
         file.delete();
         file.createNewFile();
