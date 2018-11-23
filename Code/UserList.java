@@ -8,11 +8,15 @@ import java.util.ArrayList;
 
 public class UserList {
 
-    // ArrayList with all Users
+    // ArrayList con todos los usuarios
     private ArrayList<User> users = new ArrayList<>();
     private static final String PATHNAME = "users.csv";
 
-    // Confirms login is correct (both user and pass)
+    public UserList(){
+
+    }
+
+    // Confirmar si el login es correcto (tanto usuario como contraseña)
     public boolean login(String username, String password){
         boolean output = false;
 
@@ -23,14 +27,14 @@ public class UserList {
         return output;
     }
 
-    /**Create and Delete User Methods**/
-    // Creates user and adds it to ArrayList
+    /**Métodos para Crear y Eliminar Usuarios**/
+    // Crear un usuario y lo añade al arraylist
     public void createUser(String username, String password, String firstname, String lastname, int userType){
         User user = new User(username, password, firstname, lastname, userType);
         sortAndAddToArray(user, username);
     }
 
-    // Orders the catalog
+    // Ordenar el catálogo
     private void sortAndAddToArray(User user,String username){
         int index = -1;
         for (int i = 0; i < users.size(); i++) {
@@ -61,27 +65,27 @@ public class UserList {
 
     }
 
-    // Deletes user from ArrayList
+    // Elimina un usuario del ArrayList
     public void deleteUser(String username){
         if(exists(username))
             users.remove(getIndexByUsername(username));
 
     }
 
-    /**Exists and userIndex Methods**/
-    // Checks if a username is unique
+    /**Métodos para comprobar si el usuario existe**/
+    // Verifica que el usuario existe
     public boolean exists(String username){
         boolean userExists = false;
 
         for(User u : users)
-            if(username.equalsIgnoreCase(u.getUsername())){
+            if(username.equals(u.getUsername())){
                 userExists = true;
             }
 
         return userExists;
     }
 
-    // Finds index of a user and returns it
+    // Obtener el índice de un usuario en el ArrayList
     public int getIndexByUsername(String username){
         int userIndex = -1;
 
@@ -93,15 +97,15 @@ public class UserList {
         return userIndex;
     }
 
-    /**Return User Object and Print Methods**/
-    // Returns user object with specified username
+    /**Retornar el usuario**/
+    // Retornar un usuario dado un username
     public User getUserByUsername(String username){
         User u = users.get(getIndexByUsername(username));
 
         return u;
     }
 
-    // Prints list of users
+    // Imprimir la lista de los usuarios
     public void print(){
         int index = 1;
         for(User u : users) {
@@ -112,8 +116,8 @@ public class UserList {
         System.out.printf("Total: %d usuarios\n", users.size());
     }
 
-    /**Load and Save Methods**/
-    // Loads User List
+    /**Métodos para cargar y guardar*/
+    // Cargar la lista de usuarios
     public void loadUsers() throws IOException {
         File file = new File(PATHNAME);
         FileReader reader = new FileReader(file);
@@ -130,7 +134,7 @@ public class UserList {
         reader.close();
     }
 
-    // Saves User List
+    // Guardar la lista de usuarios
     public void saveUsers() throws IOException {
         File file = new File(PATHNAME);
 

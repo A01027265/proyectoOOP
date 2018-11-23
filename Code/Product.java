@@ -1,6 +1,6 @@
 public class Product implements Cloneable{
 
-    // Instance variables
+    // Variables de la instancia
     private String upn;
     private String name;
     private double price;
@@ -19,7 +19,7 @@ public class Product implements Cloneable{
 
     }
 
-    // Clone override to be able to make a copy of this object
+    // Override al método clone para poder clonar este objeto
     @Override
     public Object clone() throws CloneNotSupportedException{
         return super.clone();
@@ -72,11 +72,12 @@ public class Product implements Cloneable{
         this.description = description;
     }
 
-    // toString y print
+    // toString
     public String toString(){
         return String.format("UPN: %s, Nombre: %s, Descripción: %s, Precio: %.2f, Cantidad: %d", upn, name, description, price, quantity);
     }
 
+    // Imprimir producto
     public void print(){
         System.out.println(this.toString());
         System.out.println();

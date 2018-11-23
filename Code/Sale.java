@@ -19,7 +19,7 @@ public class Sale {
         timestamp = Timestamp.valueOf(date);
     }
 
-    // Accessers
+    // Accessors
     public ArrayList<Product> getItems() {
         return items;
     }

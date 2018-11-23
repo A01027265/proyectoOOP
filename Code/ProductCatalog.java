@@ -13,8 +13,12 @@ public class ProductCatalog {
     private ArrayList<Product> products = new ArrayList<>();
     private static final String PATHNAME = "products.csv";
 
-    /**Create and delete product**/
-    // Creates a product in catalog
+    public ProductCatalog(){
+
+    }
+
+    /**Crear y añadir productos al catálogo**/
+    // Crear y añade productos al catálogo
     public void addProductToCatalog(String upn, String name, String description,
                                     double price, int quantity, int productType, int type, double massOrVol){
         switch(productType){
@@ -31,7 +35,7 @@ public class ProductCatalog {
         }
     }
 
-    // Orders the catalog
+    // Ordenar el catálogo
     private void sortAndAddToArray(Product p, String upn){
         int index = -1;
         for (int i = 0; i < products.size(); i++) {
@@ -62,7 +66,7 @@ public class ProductCatalog {
 
     }
 
-    // Deletes a product and all of its inventory from catalog
+    // Eliminar un producto del catálogo
     public void deleteProductFromCatalog(String upn){
         if(exists(upn)){
             int index = getIndex(upn);
@@ -70,8 +74,8 @@ public class ProductCatalog {
         }
     }
 
-    /**Add and delete quantity from products in inventory**/
-    // Adds item quantity to a product in inventory
+    /**Añadir y disminuir cantidad de producto**/
+    // Añadir una cantidad de producto a un elemento
     public void addItemToInventory(String upn, int quantity){
         if(exists(upn)){
             int index = getIndex(upn);
@@ -80,7 +84,7 @@ public class ProductCatalog {
         }
     }
 
-    // Deletes item quantity from a product in inventory
+    // Disminuye la cantidad de producto de un elemento
     public void deleteItemFromInventory(String upn, int quantity){
         if(exists(upn)){
             int index = getIndex(upn);
@@ -92,15 +96,15 @@ public class ProductCatalog {
         }
     }
 
-    /**getProductByUPN, exists, getIndex, and print methods**/
-    // Returns a product object through upn
+    /**Métodos getProductByUPN, exists, getIndex, and print**/
+    // Obtener un producto por su UPN
     public Product getProductByUPN(String upn){
         int index = getIndex(upn);
 
         return products.get(index);
     }
 
-    // Checks if product exists in catalog through upn
+    // Verificar si un producto existe
     public boolean exists(String upn){
         boolean productExists = false;
 
@@ -112,7 +116,7 @@ public class ProductCatalog {
         return productExists;
     }
 
-    // Gets index of product with upn in catalog
+    // Obtener el index de un producto a través de upn
     private int getIndex(String upn){
         int index = -1;
 
@@ -123,7 +127,7 @@ public class ProductCatalog {
         return index;
     }
 
-    // Prints List of Products in Catalog
+    // Imprime los productos del catálogo
     public void print(){
         System.out.println();
         for(Product p : products)
@@ -131,8 +135,8 @@ public class ProductCatalog {
         System.out.printf("Total: %d productos\n", products.size());
     }
 
-    /**Load and save Catalog**/
-    // Loads Product Catalog
+    /**Cargar y Guardar catálogo**/
+    // Cargar el catálogo
     public void loadCatalog() throws IOException {
         File file = new File(PATHNAME);
         FileReader reader = new FileReader(file);
@@ -151,7 +155,7 @@ public class ProductCatalog {
         reader.close();
     }
 
-    // Saves Product Catalog
+    // Guardar el catálogo
     public void saveCatalog() throws IOException {
         File file = new File(PATHNAME);
 

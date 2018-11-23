@@ -8,7 +8,7 @@ public class TienditaSystem{
     private static String username = "";
     private static String password = "";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InputMismatchException{
         int selectedOption;
 
         try {

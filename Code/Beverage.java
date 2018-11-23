@@ -1,6 +1,6 @@
 public class Beverage extends Product {
 
-    // Instance variables
+    // Variables de instancia
     private double volume;
     private TypeOfBeverage type;
 
@@ -11,7 +11,7 @@ public class Beverage extends Product {
         decideType(type);
     }
 
-    // Decides what TypeOfBeverage to assign depending on the integer received
+    // Decidir el tipo de bebida dependiendo del número recibido
     public void decideType(int type){
         switch(type){
             case 1:

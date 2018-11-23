@@ -22,7 +22,7 @@ public class User {
         this.userType = userType;
     }
 
-    // Method to decide which user type and assign enum UserType
+    // Método para decidir el tipo de usuario y asignar enum UserType
     private void decideUserType(int userType){
         switch (userType){
             case 1:
